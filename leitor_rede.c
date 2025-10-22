@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "leitor_rede.h"
+#include <ctype.h>  // Para a função isspace()
 
 // Funcao auxiliar para adicionar um vertice (metabolito ou reacao) ao grafo
 // e ao mapa de nomes, evitando duplicatas. Retorna o ID do vertice.
@@ -51,26 +52,41 @@ grafo processar_arquivo_met(const char* nome_arquivo, mapaNomes* mapa) {
     while (fgets(linha, sizeof(linha), f)) {
         linha[strcspn(linha, "\n\r")] = 0; // Remove quebras de linha
 
-        char* nome_reacao = strtok(linha, " \t");
-        char* substratos_str = strtok(NULL, "->");
-        char* produtos_str = strtok(NULL, "");
+        // 1. Encontra o separador "->" para dividir a linha em duas partes.
+        char* produtos_part = strstr(linha, "->");
+        if (!produtos_part) continue; // Pula linhas mal formatadas
 
-        if (!nome_reacao || !substratos_str || !produtos_str) continue;
+        // 2. Coloca um terminador nulo no lugar de "->" para separar as duas partes.
+        *produtos_part = '\0';
+        char* substratos_part = linha; // A primeira parte da linha (reação + substratos)
+        
+        // 3. Move o ponteiro dos produtos para depois do "->".
+        produtos_part += 2;
 
-        // Adiciona o vertice da reacao
+        // --- Agora, processamos cada parte com segurança ---
+
+        // 4. Pega o nome da reação da primeira parte.
+        char* nome_reacao = strtok(substratos_part, " \t");
+        if (!nome_reacao) continue;
+
         int id_reacao = adicionar_vertice_mapa(mapa, nome_reacao, REACAO, g);
 
-        // Processa substratos
-        char* substrato = strtok(substratos_str, " +");
+        // 5. Processa os substratos, que são o resto da primeira parte.
+        char* substrato = strtok(NULL, " +");
         while (substrato) {
+            // Remove espaços em branco antes/depois se houver
+            while (isspace((unsigned char)*substrato)) substrato++;
+            
             int id_metabolito = adicionar_vertice_mapa(mapa, substrato, METABOLITO, g);
             adiciona_arco(id_metabolito, id_reacao, g); // Arco: Metabolito -> Reacao
             substrato = strtok(NULL, " +");
         }
 
-        // Processa produtos
-        char* produto = strtok(produtos_str, " +");
+        // 6. Processa os produtos da segunda parte.
+        char* produto = strtok(produtos_part, " +");
         while (produto) {
+            while (isspace((unsigned char)*produto)) produto++;
+
             int id_metabolito = adicionar_vertice_mapa(mapa, produto, METABOLITO, g);
             adiciona_arco(id_reacao, id_metabolito, g); // Arco: Reacao -> Metabolito
             produto = strtok(NULL, " +");
