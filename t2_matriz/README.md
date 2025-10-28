@@ -2,6 +2,7 @@
 
 ## Autor(es):
 - Elen Pasqualli Gesser - GRR2021340
+- Erick da Silva Santos - GRR20242593
 
 ## Biblioteca de Grafos Utilizada:
 Foi utilizada a implementação com MATRIZ DE ADJACÊNCIA (Versão 2)
@@ -10,8 +11,21 @@ Foi utilizada a implementação com MATRIZ DE ADJACÊNCIA (Versão 2)
 O programa foi estruturado nos seguintes módulos:
 
 1.  **analise.c**: Arquivo principal que contém a função `main` e a
-    implementação dos algoritmos de análise (detecção de ciclo via DFS
-    e ordenação topológica via algoritmo de Kahn).
+    lógica central de análise da rede. De acordo como visto em aula,
+    foi implementado um algoritmo unificado baseado na Busca em
+    Profundidade (DFS) que realiza as duas tarefas principais do trabalho.
+
+    *   **Detecção de Ciclo:** A DFS utiliza um sistema de três estados
+      (ou cores: branco, cinza, preto) para cada vértice. Um ciclo é
+      detectado se, durante a busca, um arco leva a um vértice que já
+      está na pilha de recursão (estado "cinza"), caracterizando uma
+      aresta de retorno (back edge).
+      
+    *   **Ordenação Topológica:** Se a busca termina sem encontrar ciclos,
+      uma ordenação topológica é gerada. À medida que a DFS finaliza a
+      exploração de um vértice (quando ele se torna "preto"), ele é
+      adicionado no início de uma lista encadeada. Ao final do processo,
+      a lista contém os vértices em ordem topológica.
 
 2.  **leitor_rede.c / leitor_rede.h**: Módulo criado para ler e interpretar o
     arquivo de entrada `.met`. Ele é responsável por:
