@@ -29,6 +29,8 @@ static int adicionar_vertice_mapa(mapaNomes* mapa, const char* nome, int tipo, g
     return novo_id_idx + 1;
 }
 
+// Funcao principal que le o arquivo e constroi o grafo.
+// Retorna o grafo construido e preenche a estrutura do mapa.
 grafo processar_arquivo_met(const char* nome_arquivo, mapaNomes* mapa) {
     FILE* f = fopen(nome_arquivo, "r");
     if (!f) {
@@ -38,7 +40,7 @@ grafo processar_arquivo_met(const char* nome_arquivo, mapaNomes* mapa) {
 
     grafo g = cria_grafo();
 
-    mapa->capacidade = 2000; 
+    mapa->capacidade = 2000; // Capacidade inicial do mapa (para mais elementos ajustar aqui)
     mapa->nomes = malloc(mapa->capacidade * sizeof(char*));
     mapa->tipos = malloc(mapa->capacidade * sizeof(int));
     mapa->contador = 0;
@@ -81,6 +83,7 @@ grafo processar_arquivo_met(const char* nome_arquivo, mapaNomes* mapa) {
     return g;
 }
 
+// Libera a memoria alocada pelo mapa
 void destruir_mapa_nomes(mapaNomes* mapa) {
     for (int i = 0; i < mapa->contador; i++) {
         free(mapa->nomes[i]);

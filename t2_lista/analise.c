@@ -66,8 +66,7 @@ bool analisar_rede(grafo g, lista lista_ordenada, int num_total_vertices) {
     return false;
 }
 
-// --- FUNÇÃO PRINCIPAL ---
-
+// Função principal
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Uso: %s <arquivo.met>\n", argv[0]);
@@ -94,7 +93,6 @@ int main(int argc, char* argv[]) {
         printf("\n");
     }
 
-    // Liberar memoria
     no n = primeiro_no(lista_ordenada);
     while (n) {
         free(conteudo(n));
